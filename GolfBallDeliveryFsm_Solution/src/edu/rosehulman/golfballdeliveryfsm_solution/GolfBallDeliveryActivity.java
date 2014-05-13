@@ -416,6 +416,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
   /** Field Orientation sensor updates. */
   @Override
   public void onSensorChanged(double fieldHeading, float[] orientationValues) {
+    super.onSensorChanged(fieldHeading, orientationValues);
     mSensorOrientationTextView.setText(getString(R.string.degrees_format, fieldHeading));
   }
 
