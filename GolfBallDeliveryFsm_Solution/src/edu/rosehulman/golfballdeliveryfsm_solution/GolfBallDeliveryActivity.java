@@ -133,12 +133,6 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     mMatchTimeTextView.setText(getString(R.string.time_format, timeRemainingSeconds / 60, timeRemainingSeconds % 60));
 
     switch (mState) {
-    case WAITING_FOR_PICKUP:
-      if (getStateTimeMs() > 8000) {
-        // I did not get picked up. Seek some more.
-        setState(State.SEEKING_HOME);
-      }
-      break;
     case DRIVE_TOWARDS_FAR_BALL:
       seekTargetAt(mFarBallGpsX, mFarBallGpsY);
       // The transition to the next state is done within the onLocationChanged function. No timeout. Never gives up.
@@ -146,6 +140,12 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     case DRIVE_TOWARDS_HOME:
       seekTargetAt(0, 0);
       // The transition to the next state is done within the onLocationChanged function. No timeout. Never gives up.
+      break;
+    case WAITING_FOR_PICKUP:
+      if (getStateTimeMs() > 8000) {
+        // I did not get picked up. Seek some more.
+        setState(State.SEEKING_HOME);
+      }
       break;
     case SEEKING_HOME:
       seekTargetAt(0, 0);
@@ -338,6 +338,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     }
   }
 
+
   /**
    * Determines the heading needed to seek the target.
    * Note, uses sendWheelSpeedForHeading to actually send the wheel speed.
@@ -347,18 +348,19 @@ public class GolfBallDeliveryActivity extends RobotActivity {
    */
   private void seekTargetAt(double x, double y) {
     // Use the Guess X and Y to determine targetHeading.
-    double homeHeading = NavUtils.getTargetHeading(mGuessX, mGuessY, x, y);
-    double homeLeftTurnAmount = NavUtils.getLeftTurnHeadingDelta(mCurrentSensorHeading, homeHeading);
-    double homeRightTurnAmount = NavUtils.getRightTurnHeadingDelta(mCurrentSensorHeading, homeHeading);
-    if (homeLeftTurnAmount < homeRightTurnAmount) {
+    double targetHeading = NavUtils.getTargetHeading(mGuessX, mGuessY, x, y);
+    double leftTurnAmount = NavUtils.getLeftTurnHeadingDelta(mCurrentSensorHeading, targetHeading);
+    double rightTurnAmount = NavUtils.getRightTurnHeadingDelta(mCurrentSensorHeading, targetHeading);
+    if (leftTurnAmount < rightTurnAmount) {
       // Use homeLeftTurnAmount to decide how hard to turn left.
-      sendWheelSpeedForHeading(-homeLeftTurnAmount);
+      sendWheelSpeedForHeading(-leftTurnAmount);
     } else {
       // Use homeRightTurnAmount to decide how hard to turn right.
-      sendWheelSpeedForHeading(homeRightTurnAmount);
+      sendWheelSpeedForHeading(rightTurnAmount);
     }
   }  
 
+  
   /** Creates a script to drive to a target location then change states when complete. */
   public void arcToLocation(double arcTargetX, double arcTargetY, final State nextStateAfterArcCompletes) {
     // Use the x, y, and heading to determine arc radius info.
