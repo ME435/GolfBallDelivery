@@ -40,11 +40,13 @@ public class Scripts {
 
   /** Runs the script to drive to the near ball (perfectly straight) and drop it off. */
   public void nearBallScript() {
+    // TODO: Implement
   }
 
   
   /** Script to drop off the far ball. */
   public void farBallScript() {
+    // TODO: Implement
   }
 
   // -------------------------------- Arc driving ----------------------------------------
@@ -58,37 +60,7 @@ public class Scripts {
    * right.
    * @param arcLengthFt Length of the arc to drive. */
   public void driveArc(double turnRadiusFt, double arcLengthFt, final State nextStateAfterArcCompletes) {
-    int leftDutyCycle = 255, rightDutyCycle = 255; // One side or the other will be at 255.
-
-    // Use the experimental data from Lab 7 to calculate the speed and stop  time.
-    if (turnRadiusFt < 0) {
-      // Turn left
-      turnRadiusFt = Math.abs(turnRadiusFt);
-      leftDutyCycle = (int) (-0.00004 * Math.pow(turnRadiusFt, 4) + 0.0076 * Math.pow(turnRadiusFt, 3) - 0.5034
-          * Math.pow(turnRadiusFt, 2) + 16.051 * turnRadiusFt);
-    } else {
-      // Turn right
-      rightDutyCycle = (int) (-0.0002 * Math.pow(turnRadiusFt, 4) + 0.0206 * Math.pow(turnRadiusFt, 3) - 0.9359
-          * Math.pow(turnRadiusFt, 2) + 21.819 * turnRadiusFt + 9.2765);
-    }
-    // Constraint result.
-    leftDutyCycle = Math.min(leftDutyCycle, 255);
-    leftDutyCycle = Math.max(leftDutyCycle, 0);
-    rightDutyCycle = Math.min(rightDutyCycle, 255);
-    rightDutyCycle = Math.max(rightDutyCycle, 0);
-
-    // Start driving at the calculated PWM speeds.
-    mGolfBallDeliveryActivity.sendWheelSpeed(leftDutyCycle, rightDutyCycle);
-
-    // Figure out the time needed to drive
-    long stopTime = (long) (arcLengthFt / RobotActivity.DEFAULT_SPEED_FT_PER_SEC * 1000.0);
-    mCommandHandler.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        mGolfBallDeliveryActivity.sendWheelSpeed(0, 0);
-        mGolfBallDeliveryActivity.setState(nextStateAfterArcCompletes);
-      }
-    }, stopTime);
+    // TODO: Implement
   }
 
   // -------------------------------- Arm script(s) ----------------------------------------

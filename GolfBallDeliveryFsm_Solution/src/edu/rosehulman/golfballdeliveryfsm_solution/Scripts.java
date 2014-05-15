@@ -40,7 +40,7 @@ public class Scripts {
 
   /** Runs the script to drive to the near ball (perfectly straight) and drop it off. */
   public void nearBallScript() {
-    final double distanceToNearBall = NavUtils.getDistance(0, 0, 90, 50);
+    final double distanceToNearBall = NavUtils.getDistance(15, 0, 90, 50);
     final long driveTimeToNearBallMs = (long) (distanceToNearBall / RobotActivity.DEFAULT_SPEED_FT_PER_SEC * 1000);
     Toast.makeText(
         mGolfBallDeliveryActivity,
@@ -81,8 +81,10 @@ public class Scripts {
     // Figure out which ball to remove.
     for (int i = 0; i < 3; i++) {
       BallColor currentLocationsBallColor = mGolfBallDeliveryActivity.mLocationColors[i];
-      if (!mGolfBallDeliveryActivity.mOnRedTeam && (currentLocationsBallColor == BallColor.RED || currentLocationsBallColor == BallColor.GREEN) ||
-          mGolfBallDeliveryActivity.mOnRedTeam && (currentLocationsBallColor == BallColor.BLUE || currentLocationsBallColor == BallColor.YELLOW)) {
+      if (!mGolfBallDeliveryActivity.mOnRedTeam && (currentLocationsBallColor == BallColor.RED ||
+                                                    currentLocationsBallColor == BallColor.GREEN) ||
+          mGolfBallDeliveryActivity.mOnRedTeam &&  (currentLocationsBallColor == BallColor.BLUE ||
+                                                    currentLocationsBallColor == BallColor.YELLOW)) {
         removeBallAtLocation(i + 1);
         break;
       }
@@ -90,21 +92,19 @@ public class Scripts {
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        // Flip it. Note, there are WAY better solutions to flipping a 180 using
-        // the FieldOrientation sensor.
-        // For now we'll just hardcode a time and PWM values to make a CCW 180
-        // degree turn (testing required).
+        // Flip it. Note, there are WAY better solutions to flipping a 180 using the FieldOrientation sensor.
+        // For now we'll just hardcode a time and PWM values to make a CCW 180 degree turn (testing required).
         mGolfBallDeliveryActivity.sendWheelSpeed(50, 255);
       }
     }, ARM_REMOVAL_TIME_MS);
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        // Start moving again in a straight line to fix the heading before
-        // moving on to the next state.
-        mGolfBallDeliveryActivity.sendWheelSpeed(mGolfBallDeliveryActivity.mLeftStraightPwmValue, mGolfBallDeliveryActivity.mRightStraightPwmValue);
+        // Start moving again in a straight line to fix the heading before moving on to the next state.
+        mGolfBallDeliveryActivity.sendWheelSpeed(mGolfBallDeliveryActivity.mLeftStraightPwmValue,
+                                                 mGolfBallDeliveryActivity.mRightStraightPwmValue);
       }
-    }, ARM_REMOVAL_TIME_MS + 3000);
+    }, ARM_REMOVAL_TIME_MS + 2000);
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {

@@ -109,11 +109,11 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     mMatchTimeTextView.setText(getString(R.string.time_format, timeRemainingSeconds / 60, timeRemainingSeconds % 60));
 
     switch (mState) {
-    case WAITING_FOR_PICKUP:
-      break;
     case DRIVE_TOWARDS_FAR_BALL:
       break;
     case DRIVE_TOWARDS_HOME:
+      break;
+    case WAITING_FOR_PICKUP:
       break;
     case SEEKING_HOME:
       break;

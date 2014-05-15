@@ -95,7 +95,14 @@ public class GolfBallDeliveryActivity extends RobotActivity {
 
   /** Values used to drive straight. */
   public int mLeftStraightPwmValue = 255, mRightStraightPwmValue = 255;
+
+  /** Multiplier used during seeking to calculate a PWM value based on the turn amount needed. */
+  private static final double SEEKING_DUTY_CYCLE_PER_ANGLE_OFF_MULTIPLIER = 3.0;  // units are (PWM value)/degrees
+
+  /** Variable used to cap the slowest PWM duty cycle used while seeking. Pick a value from -255 to 255. */
+  private static final int LOWEST_DESIRABLE_SEEKING_DUTY_CYCLE = 50;
   
+  /** Constant used during manual voice commands as the default distance to travel. */
   public static final double MANUAL_VOICE_COMMAND_DISTANCE = 8.0;
   
   /** Instance of a helper method class that implements various script driving functions. */
@@ -111,7 +118,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
   private long MATCH_LENGTH_MS = 180000; // 3 minutes in milliseconds
 
   /** When driving to a target, as soon as you are within this distance stop seeking and start driving arc. */
-  private double TRANSITION_TO_ARC_STRATEGY_RADIUS_FT = 30.0; // Set to a value when a script can do the rest.
+  private double TRANSITION_TO_ARC_STRATEGY_RADIUS_FT = 30.0; // When can a script can do the rest.
 
   /** Method that is called 10 times per second for updates. Note, the setup was done within RobotActivity. */
   public void loop() {
@@ -211,7 +218,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
       sendWheelSpeed(0, 0);
       break;
     case NEAR_BALL_SCRIPT:
-      updateMissionStrategyVarialbes();
+      updateMissionStrategyVariables();
       mGpsInfoTextView.setText("---"); // Clear GPS display (optional)
       mGuessXYTextView.setText("---"); // Clear guess display (optional)
       mScripts.nearBallScript();
@@ -269,7 +276,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
   }
 
   /** Updates the far ball location X and Y as well as the white ball status. */
-  private void updateMissionStrategyVarialbes() {
+  private void updateMissionStrategyVariables() {
     mWhiteBallLocation = 0; // Assume there is no white ball present (the default).
     for (int i = 0; i < 3; i++) {
    // Calculate the mFarBallGpsX and mFarBallGpsY values.
@@ -319,46 +326,28 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     mLeftDutyCycleTextView.setText("Left " + leftDutyCycle);
     mRightDutyCycleTextView.setText(rightDutyCycle + " Right");
   }
-
+  
+  
   /** 
-   * Adjusts the wheel speed to perform a turn. Effort is proportional to the amount of turning needed.
-   * Note, uses sendWheelSpeed to actually send the values to the wheels.
-   * 
-   * @param turnAmount Turn amount in degrees needed. Negatives for left turns 
-   */
-  private void sendWheelSpeedForHeading(double turnAmount) {
-    int dutyCycleReduction = 3 * Math.round((int) Math.abs(turnAmount));
-    if (dutyCycleReduction > 250) {
-      dutyCycleReduction = 250;
-    }
-    if (turnAmount < 0) {
-      sendWheelSpeed(255 - dutyCycleReduction, 255);
-    } else {
-      sendWheelSpeed(255, 255 - dutyCycleReduction);
-    }
-  }
-
-
-  /**
-   * Determines the heading needed to seek the target.
-   * Note, uses sendWheelSpeedForHeading to actually send the wheel speed.
+   * Adjust the PWM duty cycles based on the turn amount needed to point at the target heading.
    * 
    * @param x GPS X value of the target.
-   * @param y GPS Y value of the target.
-   */
+   * @param y GPS Y value of the target. */
   private void seekTargetAt(double x, double y) {
-    // Use the Guess X and Y to determine targetHeading.
+    int leftDutyCycle = mLeftStraightPwmValue;
+    int rightDutyCycle = mRightStraightPwmValue;
     double targetHeading = NavUtils.getTargetHeading(mGuessX, mGuessY, x, y);
     double leftTurnAmount = NavUtils.getLeftTurnHeadingDelta(mCurrentSensorHeading, targetHeading);
     double rightTurnAmount = NavUtils.getRightTurnHeadingDelta(mCurrentSensorHeading, targetHeading);
     if (leftTurnAmount < rightTurnAmount) {
-      // Use homeLeftTurnAmount to decide how hard to turn left.
-      sendWheelSpeedForHeading(-leftTurnAmount);
+      leftDutyCycle = mLeftStraightPwmValue - (int)(leftTurnAmount * SEEKING_DUTY_CYCLE_PER_ANGLE_OFF_MULTIPLIER);
+      leftDutyCycle = Math.max(leftDutyCycle, LOWEST_DESIRABLE_SEEKING_DUTY_CYCLE);
     } else {
-      // Use homeRightTurnAmount to decide how hard to turn right.
-      sendWheelSpeedForHeading(rightTurnAmount);
+      rightDutyCycle = mRightStraightPwmValue - (int)(rightTurnAmount * SEEKING_DUTY_CYCLE_PER_ANGLE_OFF_MULTIPLIER);
+      rightDutyCycle = Math.max(rightDutyCycle, LOWEST_DESIRABLE_SEEKING_DUTY_CYCLE);
     }
-  }  
+    sendWheelSpeed(leftDutyCycle, rightDutyCycle);
+  }
 
   
   /** Creates a script to drive to a target location then change states when complete. */
@@ -375,43 +364,43 @@ public class GolfBallDeliveryActivity extends RobotActivity {
   
   // --------------------------- Sensor listeners ---------------------------
 
-  /** GPS sensor updates. */
-  @Override
-  public void onLocationChanged(double x, double y, double heading, Location location) {
-    super.onLocationChanged(x, y, heading, location);
-    if (mWhiteBallLocation > 0 && x > WHITE_BALL_MIN_GPS_X_FT) {
-      mScripts.removeBallAtLocation(mWhiteBallLocation);
-      mWhiteBallLocation = 0;
-    }
-    String gpsInfo = getString(R.string.xy_format, x, y);
-    if (heading <= 180.0 && heading > -180.0) {
-      gpsInfo += " " + getString(R.string.degrees_format, heading);
-      if (mState == State.DRIVE_TOWARDS_FAR_BALL) {
-        double distanceFromTarget = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY, mFarBallGpsX, mFarBallGpsY);
-        double targetHeading = NavUtils.getTargetHeading(x, y, mFarBallGpsX, mFarBallGpsY);
-        // Determine if we should drive arc or continue seeking far ball.
-        double leftTurnAmount = NavUtils.getLeftTurnHeadingDelta(heading, targetHeading);
-        double rightTurnAmount = NavUtils.getRightTurnHeadingDelta(heading, targetHeading);
-        if (distanceFromTarget < TRANSITION_TO_ARC_STRATEGY_RADIUS_FT && (leftTurnAmount < 70 || rightTurnAmount < 70)) {
-          setState(State.ARC_TO_FAR_BALL); // The next step is handled within setState.
-        }
-      }
-      if (mState == State.DRIVE_TOWARDS_HOME) {
-        double distanceFromTarget = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY, 0, 0);
-        double targetHeading = NavUtils.getTargetHeading(x, y, 0, 0);
-        // Determine if we should drive arc or continue seeking home.
-        double leftTurnAmount = NavUtils.getLeftTurnHeadingDelta(heading, targetHeading);
-        double rightTurnAmount = NavUtils.getRightTurnHeadingDelta(heading, targetHeading);
-        if (distanceFromTarget < TRANSITION_TO_ARC_STRATEGY_RADIUS_FT && (leftTurnAmount < 70 || rightTurnAmount < 70)) {
-          setState(State.ARC_TO_HOME); // The next step within setState.
-        }
-      }      
-    } else {
-      gpsInfo += " ?º";
-    }
-    gpsInfo += "    " + mGpsCounter;
-    mGpsInfoTextView.setText(gpsInfo);
+/** GPS sensor updates. */
+@Override
+public void onLocationChanged(double x, double y, double heading, Location location) {
+  super.onLocationChanged(x, y, heading, location);
+  if (mWhiteBallLocation > 0 && x > WHITE_BALL_MIN_GPS_X_FT) {
+    mScripts.removeBallAtLocation(mWhiteBallLocation);
+    mWhiteBallLocation = 0;
   }
+  String gpsInfo = getString(R.string.xy_format, x, y);
+  if (heading <= 180.0 && heading > -180.0) {
+    gpsInfo += " " + getString(R.string.degrees_format, heading);
+    if (mState == State.DRIVE_TOWARDS_FAR_BALL) {
+      double distanceFromTarget = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY, mFarBallGpsX, mFarBallGpsY);
+      double targetHeading = NavUtils.getTargetHeading(x, y, mFarBallGpsX, mFarBallGpsY);
+      // Determine if we should drive arc or continue seeking far ball.
+      double leftTurnAmount = NavUtils.getLeftTurnHeadingDelta(heading, targetHeading);
+      double rightTurnAmount = NavUtils.getRightTurnHeadingDelta(heading, targetHeading);
+      if (distanceFromTarget < TRANSITION_TO_ARC_STRATEGY_RADIUS_FT && (leftTurnAmount < 70 || rightTurnAmount < 70)) {
+        setState(State.ARC_TO_FAR_BALL); // The next step is handled within setState.
+      }
+    }
+    if (mState == State.DRIVE_TOWARDS_HOME) {
+      double distanceFromTarget = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY, 0, 0);
+      double targetHeading = NavUtils.getTargetHeading(x, y, 0, 0);
+      // Determine if we should drive arc or continue seeking home.
+      double leftTurnAmount = NavUtils.getLeftTurnHeadingDelta(heading, targetHeading);
+      double rightTurnAmount = NavUtils.getRightTurnHeadingDelta(heading, targetHeading);
+      if (distanceFromTarget < TRANSITION_TO_ARC_STRATEGY_RADIUS_FT && (leftTurnAmount < 70 || rightTurnAmount < 70)) {
+        setState(State.ARC_TO_HOME); // The next step within setState.
+      }
+    }      
+  } else {
+    gpsInfo += " ?º";
+  }
+  gpsInfo += "    " + mGpsCounter;
+  mGpsInfoTextView.setText(gpsInfo);
+}
 
   /** Field Orientation sensor updates. */
   @Override
@@ -442,7 +431,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
       mCommandHandler.postDelayed(new Runnable() {
         @Override
         public void run() {
-          setState(State.WAITING_FOR_PICKUP);
+          sendWheelSpeed(0, 0);
         }
       }, (long) driveTimeMs);      
     }
