@@ -45,7 +45,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
   }
 
   /** Tracks the robot's current state. */
-  private State mState;
+  public State mState;
 
   // Enum tips from
   // http://stackoverflow.com/questions/5021246/conveniently-map-between-enum-and-int-string
@@ -115,10 +115,10 @@ public class GolfBallDeliveryActivity extends RobotActivity {
   private long mMatchStartTime;
 
   /** Constant that holds the maximum length of the match (saved in milliseconds). */
-  private long MATCH_LENGTH_MS = 180000; // 3 minutes in milliseconds
+  private static final long MATCH_LENGTH_MS = 180000; // 3 minutes in milliseconds
 
   /** When driving to a target, as soon as you are within this distance stop seeking and start driving arc. */
-  private double TRANSITION_TO_ARC_STRATEGY_RADIUS_FT = 30.0; // When can a script can do the rest.
+  private static final double TRANSITION_TO_ARC_STRATEGY_RADIUS_FT = 30.0; // When can a script can do the rest.
 
   /** Method that is called 10 times per second for updates. Note, the setup was done within RobotActivity. */
   public void loop() {
@@ -498,7 +498,7 @@ public void onLocationChanged(double x, double y, double heading, Location locat
       mTeamChangeButton.setBackgroundResource(R.drawable.red_button);
       mTeamChangeButton.setText("Team Red");
     }
-    // setTeamToRed(mOnRedTeam); // This call is optional. It will reset your GPS and sensor heading values.
+    setTeamToRed(mOnRedTeam); // This call is optional. It will reset your GPS and sensor heading values.
   }
 
   /** Sends a message to Arduino to perform a ball color test. */
