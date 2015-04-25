@@ -435,12 +435,12 @@ public class GolfBallDeliveryActivity extends RobotActivity {
 
     public void handleFakeGpsF2(View view) {
         Toast.makeText(this, "handleFakeGpsF2", Toast.LENGTH_SHORT).show();
-        onLocationChanged(220, 50, 135, null);  // Within range but the heading is pointing so poorly an arc should be used.
+        onLocationChanged(220, 50, 135, null);  // Within range but the heading is pointing so poorly an arc should not be used.
     }
 
     public void handleFakeGpsF3(View view) {
         Toast.makeText(this, "handleFakeGpsF3", Toast.LENGTH_SHORT).show();
-        onLocationChanged(230, 40, 35, null);  // Within range but the heading is pointing so poorly an arc should be used.
+        onLocationChanged(230, 40, 35, null);  // Within range with a good heading, use an arc to finish the ball drop process.
     }
 
     public void handleFakeGpsH0(View view) {
