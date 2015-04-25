@@ -186,7 +186,7 @@ public class RobotActivity extends AccessoryActivity implements FieldGpsListener
     mGuessX = mCurrentGpsX;
     mGuessY = mCurrentGpsY;
 
-    mCurrentGpsDistance = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY, 0, 0);
+    mCurrentGpsDistance = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY, 0, 0); // TODO: Update this code to allow for targets other than 0, 0
     int lastGpsReadingIndex = mSavedGpsDistances.size() - 1;
     double oldGpsDistance = lastGpsReadingIndex < 0 ? 1000 : mSavedGpsDistances.get(lastGpsReadingIndex);
     if (mCurrentGpsDistance > oldGpsDistance) {
