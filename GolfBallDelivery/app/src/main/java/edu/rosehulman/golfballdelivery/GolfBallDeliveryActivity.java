@@ -226,7 +226,6 @@ public class GolfBallDeliveryActivity extends RobotActivity {
                 break;
             case WAITING_FOR_PICKUP:
                 sendWheelSpeed(0, 0);
-                //startListening("Give me a command"); // No voice command for now due to a reconnection bug.
                 break;
             case SEEKING_HOME:
                 // Actions handled in the loop function.
