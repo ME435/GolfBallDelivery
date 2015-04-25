@@ -85,32 +85,32 @@ public class Scripts {
     final String gripperOpen = "GRIPPER 45";
     final String gripperClose = "GRIPPER 0";
 
-    mGolfBallDeliveryActivity.sendArmCommand("ATTACH 111111"); // Just in case
+    mGolfBallDeliveryActivity.sendCommand("ATTACH 111111"); // Just in case
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        mGolfBallDeliveryActivity.sendArmCommand(positionHomeSide);
+        mGolfBallDeliveryActivity.sendCommand(positionHomeSide);
       }
     }, 10);
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        mGolfBallDeliveryActivity.sendArmCommand(positionSideUp);
+        mGolfBallDeliveryActivity.sendCommand(positionSideUp);
       }
     }, 2000);
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        mGolfBallDeliveryActivity.sendArmCommand(gripperOpen);
+        mGolfBallDeliveryActivity.sendCommand(gripperOpen);
         switch (location) {
         case 1:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand1Up);
+          mGolfBallDeliveryActivity.sendCommand(positionStand1Up);
           break;
         case 2:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand2Up);
+          mGolfBallDeliveryActivity.sendCommand(positionStand2Up);
           break;
         case 3:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand3Up);
+          mGolfBallDeliveryActivity.sendCommand(positionStand3Up);
           break;
         }
       }
@@ -120,13 +120,13 @@ public class Scripts {
       public void run() {
         switch (location) {
         case 1:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand1);
+          mGolfBallDeliveryActivity.sendCommand(positionStand1);
           break;
         case 2:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand2);
+          mGolfBallDeliveryActivity.sendCommand(positionStand2);
           break;
         case 3:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand3);
+          mGolfBallDeliveryActivity.sendCommand(positionStand3);
           break;
         }
       }
@@ -134,7 +134,7 @@ public class Scripts {
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        mGolfBallDeliveryActivity.sendArmCommand(gripperClose);
+        mGolfBallDeliveryActivity.sendCommand(gripperClose);
       }
     }, 7000);
     mCommandHandler.postDelayed(new Runnable() {
@@ -142,13 +142,13 @@ public class Scripts {
       public void run() {
         switch (location) {
         case 1:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand1Up);
+          mGolfBallDeliveryActivity.sendCommand(positionStand1Up);
           break;
         case 2:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand2Up);
+          mGolfBallDeliveryActivity.sendCommand(positionStand2Up);
           break;
         case 3:
-          mGolfBallDeliveryActivity.sendArmCommand(positionStand3Up);
+          mGolfBallDeliveryActivity.sendCommand(positionStand3Up);
           break;
         }
       }
@@ -156,19 +156,19 @@ public class Scripts {
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        mGolfBallDeliveryActivity.sendArmCommand(positionDrop);
+        mGolfBallDeliveryActivity.sendCommand(positionDrop);
       }
     }, 11000);
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        mGolfBallDeliveryActivity.sendArmCommand(gripperOpen);
+        mGolfBallDeliveryActivity.sendCommand(gripperOpen);
       }
     }, 13000);
     mCommandHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        mGolfBallDeliveryActivity.sendArmCommand(positionHome);
+        mGolfBallDeliveryActivity.sendCommand(positionHome);
       }
     }, 14000);
     mCommandHandler.postDelayed(new Runnable() {

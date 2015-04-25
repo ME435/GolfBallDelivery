@@ -421,13 +421,6 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     }
 
     /**
-     * Wrapper method to call sendCommand since in 2014, sendCommand can't be called from the Scripts file.
-     */
-    public void sendArmCommand(String command) {
-        sendCommand(command);
-    }
-
-    /**
      * Test GPS point when going to the Far ball (assumes Blue Team heading to red ball).
      */
     public void handleFakeGpsF0(View view) {
