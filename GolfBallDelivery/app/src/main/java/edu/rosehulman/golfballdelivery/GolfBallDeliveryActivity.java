@@ -128,6 +128,11 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     private static final int LOWEST_DESIRABLE_SEEKING_DUTY_CYCLE = 150;
 
     /**
+     * If the GPS X value is greater than this and we have the white ball, then drop it off.
+     */
+    private static final double WHITE_BALL_MIN_GPS_X_FT = 200;
+
+    /**
      * Method that is called 10 times per second for updates. Note, the setup was done within RobotActivity.
      */
     public void loop() {
