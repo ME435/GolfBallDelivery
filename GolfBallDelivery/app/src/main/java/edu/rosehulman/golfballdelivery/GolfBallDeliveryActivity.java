@@ -37,10 +37,13 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      * An enum used for the mState variable that tracks the robot's current state.
      */
     public enum State {
-        READY_FOR_MISSION, NEAR_BALL_SCRIPT,
-        DRIVE_TOWARDS_FAR_BALL, ARC_TO_FAR_BALL,
+        READY_FOR_MISSION,
+        NEAR_BALL_SCRIPT,
+        DRIVE_TOWARDS_FAR_BALL,
+        ARC_TO_FAR_BALL,
         FAR_BALL_SCRIPT,
-        DRIVE_TOWARDS_HOME, ARC_TO_HOME,
+        DRIVE_TOWARDS_HOME,
+        ARC_TO_HOME,
         WAITING_FOR_PICKUP,
         SEEKING_HOME,
         RUNNING_VOICE_COMMAND,
@@ -114,6 +117,15 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      */
     private long MATCH_LENGTH_MS = 300000; // 5 minutes in milliseconds (5 * 60 * 1000)
 
+    /**
+     * Multiplier used during seeking to calculate a PWM value based on the turn amount needed.
+     */
+    private static final double SEEKING_DUTY_CYCLE_PER_ANGLE_OFF_MULTIPLIER = 3.0;  // units are (PWM value)/degrees
+
+    /**
+     * Variable used to cap the slowest PWM duty cycle used while seeking. Pick a value from -255 to 255.
+    */
+    private static final int LOWEST_DESIRABLE_SEEKING_DUTY_CYCLE = 150;
 
     /**
      * Method that is called 10 times per second for updates. Note, the setup was done within RobotActivity.
