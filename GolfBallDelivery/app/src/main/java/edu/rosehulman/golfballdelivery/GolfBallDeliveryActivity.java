@@ -472,8 +472,8 @@ public class GolfBallDeliveryActivity extends RobotActivity {
         mFieldGps.setCurrentLocationAsLocationOnXAxis();
     }
 
-    public void handleZerotHeading(View view) {
-        Toast.makeText(this, "handleZerotHeading", Toast.LENGTH_SHORT).show();
+    public void handleZeroHeading(View view) {
+        Toast.makeText(this, "handleZeroHeading", Toast.LENGTH_SHORT).show();
         mFieldOrientation.setCurrentFieldHeading(0);
     }
 

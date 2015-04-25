@@ -254,7 +254,7 @@
                 android:id="@+id/reset_heading_button"
                 style="@style/ColorButton.HorzLinearLayout"
                 android:background="@drawable/purple_button"
-                android:onClick="handleZerotHeading"
+                android:onClick="handleZeroHeading"
                 android:text="Zero heading" />
         </TableRow>
     </TableLayout>
