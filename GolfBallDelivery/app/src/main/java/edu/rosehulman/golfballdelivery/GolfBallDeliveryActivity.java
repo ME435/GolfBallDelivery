@@ -133,6 +133,11 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     private static final double WHITE_BALL_MIN_GPS_X_FT = 200;
 
     /**
+     * When driving to a target, as soon as you are within this distance stop seeking and start driving an arc.
+     */
+    private static final double TRANSITION_TO_ARC_STRATEGY_RADIUS_FT = 30.0; // When can a script do the rest.
+
+    /**
      * Method that is called 10 times per second for updates. Note, the setup was done within RobotActivity.
      */
     public void loop() {
