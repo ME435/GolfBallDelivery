@@ -17,9 +17,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import edu.rosehulman.me435.RobotActivity;
-
-public class GolfBallDeliveryActivity extends RobotActivity {
+public class GolfBallDeliveryActivity extends AppCompatActivity {
 
     /**
      * An enum used for variables when a ball color needs to be referenced.
