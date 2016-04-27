@@ -1,12 +1,18 @@
 package edu.rosehulman.me435;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -20,6 +26,11 @@ import android.widget.Toast;
 public class FieldGps implements LocationListener {
 
   public static final String TAG = FieldGps.class.getSimpleName();
+
+  private static final String[] LOCATION_PERMS = {
+    Manifest.permission.ACCESS_FINE_LOCATION
+  };
+  private static final int LOCATION_REQUEST = 0;
 
   /** GPS will give updates no faster than this. */
   private static final long DEFAULT_MIN_TIME_MS = 1000;  // 1 second
@@ -106,7 +117,7 @@ public class FieldGps implements LocationListener {
    *          A context (usually an Activity) used to get the LocationManager.
    */
   public void requestLocationUpdates(Context context) {
-    requestLocationUpdates(mContext, DEFAULT_MIN_TIME_MS, DEFAULT_MIN_DISTANCE);
+    requestLocationUpdates(context, DEFAULT_MIN_TIME_MS, DEFAULT_MIN_DISTANCE);
   }
 
   /**
@@ -132,10 +143,21 @@ public class FieldGps implements LocationListener {
       Toast.makeText(context, "Enable GPS in Settings", Toast.LENGTH_LONG).show();
       context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
     } else {
-      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime_ms,
-          minDistance_meters, this);
+
+      if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(
+              mContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        Log.d(TAG, "Begin requesting locations.");
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime_ms,
+                minDistance_meters, this);
+      } else {
+        // Added due to:
+        // http://stackoverflow.com/questions/32083913/android-gps-requires-access-fine-location-error-even-though-my-manifest-file
+        Log.d(TAG, "Requesting permission for fine location.");
+        ActivityCompat.requestPermissions((Activity)mContext, LOCATION_PERMS, LOCATION_REQUEST);
+      }
     }
   }
+
 
   /**
    * Stop receiving GPS updates.
@@ -143,7 +165,10 @@ public class FieldGps implements LocationListener {
   public void removeUpdates() {
     LocationManager locationManager = (LocationManager) mContext
         .getSystemService(Context.LOCATION_SERVICE);
-    locationManager.removeUpdates(this);
+    if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(
+            mContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
+      locationManager.removeUpdates(this);
+    }
   }
 
   /**
@@ -241,3 +266,4 @@ public class FieldGps implements LocationListener {
     return mLastGpsLocation;
   }
 }
+

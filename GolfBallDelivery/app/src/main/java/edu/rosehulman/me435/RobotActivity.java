@@ -1,13 +1,13 @@
 package edu.rosehulman.me435;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
-
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /** 
  * This class is intended to be subclasses by your main activity. It subclasses
