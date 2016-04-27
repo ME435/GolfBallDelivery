@@ -352,7 +352,6 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      * Click to the far left image button (Location 1).
      */
     public void handleBallAtLocation1Click(View view) {
-        Toast.makeText(this, "handleBallAtLocation1Click", Toast.LENGTH_SHORT).show();
         handleBallClickForLocation(1);
     }
 
@@ -360,7 +359,6 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      * Click to the center image button (Location 2).
      */
     public void handleBallAtLocation2Click(View view) {
-        Toast.makeText(this, "handleBallAtLocation2Click", Toast.LENGTH_SHORT).show();
         handleBallClickForLocation(2);
     }
 
@@ -368,12 +366,10 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      * Click to the far right image button (Location 3).
      */
     public void handleBallAtLocation3Click(View view) {
-        Toast.makeText(this, "handleBallAtLocation3Click", Toast.LENGTH_SHORT).show();
         handleBallClickForLocation(3);
     }
 
     public void handleTeamChange(View view) {
-        Toast.makeText(this, "handleTeamChange", Toast.LENGTH_SHORT).show();
         mBallImageButtons[0].setImageResource(BALL_DRAWABLE_RESOURCES[BallColor.NONE.ordinal()]);
         mBallImageButtons[1].setImageResource(BALL_DRAWABLE_RESOURCES[BallColor.NONE.ordinal()]);
         mBallImageButtons[2].setImageResource(BALL_DRAWABLE_RESOURCES[BallColor.NONE.ordinal()]);
@@ -394,14 +390,13 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      * Sends a message to Arduino to perform a ball color test.
      */
     public void handlePerformBallTest(View view) {
-        Toast.makeText(this, "handlePerformBallTest", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "TODO: implement handlePerformBallTest", Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Clicks to the red arrow image button that should show a dialog window.
      */
     public void handleDrivingStraight(View view) {
-        Toast.makeText(this, "handleDrivingStraight", Toast.LENGTH_SHORT).show();
         new DialogFragment() {
             @Override
             public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -446,61 +441,50 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      * Test GPS point when going to the Far ball (assumes Blue Team heading to red ball).
      */
     public void handleFakeGpsF0(View view) {
-        Toast.makeText(this, "handleFakeGpsF0", Toast.LENGTH_SHORT).show();
         onLocationChanged(239, 50, NO_HEADING, null);  // Amazing GPS value but no heading so ignored.
     }
 
     public void handleFakeGpsF1(View view) {
-        Toast.makeText(this, "handleFakeGpsF1", Toast.LENGTH_SHORT).show();
         onLocationChanged(209, 50, 0, null);  // Just a bit out of range so ignored.
     }
 
     public void handleFakeGpsF2(View view) {
-        Toast.makeText(this, "handleFakeGpsF2", Toast.LENGTH_SHORT).show();
         onLocationChanged(220, 50, 135, null);  // Within range but the heading is pointing so poorly an arc should not be used.
     }
 
     public void handleFakeGpsF3(View view) {
-        Toast.makeText(this, "handleFakeGpsF3", Toast.LENGTH_SHORT).show();
         onLocationChanged(230, 40, 35, null);  // Within range with a good heading, use an arc to finish the ball drop process.
     }
 
     public void handleFakeGpsH0(View view) {
-        Toast.makeText(this, "handleFakeGpsH0", Toast.LENGTH_SHORT).show();
         onLocationChanged(165, 0, -180, null);
     }
 
     public void handleFakeGpsH1(View view) {
-        Toast.makeText(this, "handleFakeGpsH1", Toast.LENGTH_SHORT).show();
         onLocationChanged(50, 0, -180, null);
     }
 
     public void handleFakeGpsH2(View view) {
-        Toast.makeText(this, "handleFakeGpsH2", Toast.LENGTH_SHORT).show();
         onLocationChanged(20, 10, -170, null);
     }
 
     public void handleFakeGpsH3(View view) {
-        Toast.makeText(this, "handleFakeGpsH3", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "TODO: implement handleFakeGpsH3 if needed", Toast.LENGTH_SHORT).show();
     }
 
     public void handleSetOrigin(View view) {
-        Toast.makeText(this, "handleSetOrigin", Toast.LENGTH_SHORT).show();
         mFieldGps.setCurrentLocationAsOrigin();
     }
 
     public void handleSetXAxis(View view) {
-        Toast.makeText(this, "handleSetXAxis", Toast.LENGTH_SHORT).show();
         mFieldGps.setCurrentLocationAsLocationOnXAxis();
     }
 
     public void handleZeroHeading(View view) {
-        Toast.makeText(this, "handleZeroHeading", Toast.LENGTH_SHORT).show();
         mFieldOrientation.setCurrentFieldHeading(0);
     }
 
     public void handleGoOrMissionComplete(View view) {
-        Toast.makeText(this, "handleGoOrMissionComplete", Toast.LENGTH_SHORT).show();
         if (mState == State.READY_FOR_MISSION) {
             mMatchStartTime = System.currentTimeMillis();
             mGoOrMissionCompleteButton.setBackgroundResource(R.drawable.red_button);
