@@ -273,21 +273,21 @@
         android:text="---" />
 
     <TextView
-        android:id="@+id/left_duty_cycle_textview"
+        android:id="@+id/right_duty_cycle_textview"
         style="@style/DisplayText"
         android:layout_above="@+id/go_or_mission_complete_button"
         android:layout_alignParentRight="true"
         android:layout_margin="10dp"
-        android:text="Left 0"
+        android:text="Right 0"
         android:textSize="22sp" />
 
     <TextView
-        android:id="@+id/right_duty_cycle_textview"
+        android:id="@+id/left_duty_cycle_textview"
         style="@style/DisplayText"
         android:layout_above="@+id/go_or_mission_complete_button"
         android:layout_alignParentLeft="true"
         android:layout_margin="10dp"
-        android:text="0 Right"
+        android:text="0 Left"
         android:textSize="22sp" />
 
     <TextView

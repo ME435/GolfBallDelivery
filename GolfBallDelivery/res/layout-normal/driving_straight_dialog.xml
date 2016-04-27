@@ -4,6 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
+    android:background="#888"
     android:orientation="vertical"
     android:padding="10dp" >
 
@@ -16,7 +17,7 @@
         android:padding="10dp" >
 
         <NumberPicker
-            android:id="@+id/right_pwm_number_picker"
+            android:id="@+id/left_pwm_number_picker"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -26,15 +27,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="&lt;-- Right  " />
+            android:text="&lt;-- Left  " />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  Left -->" />
+            android:text="  Right -->" />
 
         <NumberPicker
-            android:id="@+id/left_pwm_number_picker"
+            android:id="@+id/right_pwm_number_picker"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"

@@ -1,10 +1,10 @@
 package edu.rosehulman.golfballdelivery;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,9 +17,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import edu.rosehulman.me435.RobotActivity;
-
-public class GolfBallDeliveryActivity extends RobotActivity {
+public class GolfBallDeliveryActivity extends Activity {
 
     /**
      * An enum used for variables when a ball color needs to be referenced.
@@ -34,40 +32,12 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     public BallColor[] mLocationColors = new BallColor[]{BallColor.NONE, BallColor.NONE, BallColor.NONE};
 
     /**
-     * An enum used for the mState variable that tracks the robot's current state.
-     */
-    public enum State {
-        READY_FOR_MISSION,
-        NEAR_BALL_SCRIPT,
-        DRIVE_TOWARDS_FAR_BALL,
-        ARC_TO_FAR_BALL,
-        FAR_BALL_SCRIPT,
-        DRIVE_TOWARDS_HOME,
-        ARC_TO_HOME,
-        WAITING_FOR_PICKUP,
-        SEEKING_HOME,
-    }
-
-	// TODO: When you design your own FSM you will change the states listed above!
-	
-    /**
-     * Tracks the robot's current state.
-     */
-    private State mState;
-
-    // Enum tips from
-    // http://stackoverflow.com/questions/5021246/conveniently-map-between-enum-and-int-string
-    // enum to int => yourEnum.ordinal()
-    // int to enum => EnumType.values()[someInt]
-    // String to enum => EnumType.valueOf(yourString)
-    // enum to String => yourEnum.name()
-
-    /**
      * Simple boolean that is updated when the Team button is pressed to switch teams.
      */
     public boolean mOnRedTeam = false;
 
-    // ---------------------- UI Widget References ----------------------
+
+    // ---------------------- UI References ----------------------
     /**
      * An array (of size 3) that keeps a reference to the 3 balls displayed on the UI.
      */
@@ -91,17 +61,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     private TextView mCurrentStateTextView, mStateTimeTextView, mGpsInfoTextView, mSensorOrientationTextView,
             mGuessXYTextView, mLeftDutyCycleTextView, mRightDutyCycleTextView, mMatchTimeTextView;
     ;
-    // ---------------------- End of UI Widget References ----------------------
-
-    /**
-     * Values used to drive straight.
-     */
-    public int mLeftStraightPwmValue = 255, mRightStraightPwmValue = 255;
-
-    /**
-     * Instance of a helper method class that implements various script driving functions.
-     */
-    private Scripts mScripts;
+    // ---------------------- End of UI References ----------------------
 
     /**
      * Time when the state began (saved as the number of millisecond since epoch).
@@ -119,60 +79,10 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     private long MATCH_LENGTH_MS = 300000; // 5 minutes in milliseconds (5 * 60 * 1000)
 
     /**
-     * Multiplier used during seeking to calculate a PWM value based on the turn amount needed.
+     * Values used with the drive straight dialog.
      */
-    private static final double SEEKING_DUTY_CYCLE_PER_ANGLE_OFF_MULTIPLIER = 3.0;  // units are (PWM value)/degrees
+    public int mLeftStraightPwmValue = 255, mRightStraightPwmValue = 255;
 
-    /**
-     * Variable used to cap the slowest PWM duty cycle used while seeking. Pick a value from -255 to 255.
-    */
-    private static final int LOWEST_DESIRABLE_SEEKING_DUTY_CYCLE = 150;
-
-    /**
-     * If the GPS X value is greater than this and we have the white ball, then drop it off.
-     */
-    private static final double WHITE_BALL_MIN_GPS_X_FT = 200;
-
-    /**
-     * When driving to a target, as soon as you are within this distance stop seeking and start driving an arc.
-     */
-    private static final double TRANSITION_TO_ARC_STRATEGY_RADIUS_FT = 30.0; // When can a script do the rest.
-
-    /**
-     * Method that is called 10 times per second for updates. Note, the setup was done within RobotActivity.
-     */
-    public void loop() {
-        super.loop(); // Important to call super first so that the RobotActivity loop function is run first.
-        // RobotActivity updated the mGuessX and mGuessY already. Here we need to display it.
-        mStateTimeTextView.setText("" + getStateTimeMs() / 1000);
-        mGuessXYTextView.setText("(" + (int) mGuessX + ", " + (int) mGuessY + ")");
-
-        // Match timer.
-        long matchTimeMs = MATCH_LENGTH_MS;
-        long timeRemainingSeconds = MATCH_LENGTH_MS / 1000;
-        if (mState != State.READY_FOR_MISSION) {
-            matchTimeMs = getMatchTimeMs();
-            timeRemainingSeconds = (MATCH_LENGTH_MS - matchTimeMs) / 1000;
-            if (getMatchTimeMs() > MATCH_LENGTH_MS) {
-                setState(State.READY_FOR_MISSION);
-            }
-        }
-        mMatchTimeTextView.setText(getString(R.string.time_format, timeRemainingSeconds / 60, timeRemainingSeconds % 60));
-
-        switch (mState) {
-            case DRIVE_TOWARDS_FAR_BALL:
-                break;
-            case DRIVE_TOWARDS_HOME:
-                break;
-            case WAITING_FOR_PICKUP:
-                break;
-            case SEEKING_HOME:
-                break;
-            default:
-                // Other states don't need to do anything, but could.
-                break;
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,72 +103,18 @@ public class GolfBallDeliveryActivity extends RobotActivity {
         mMatchTimeTextView = (TextView) findViewById(R.id.match_time_textview);
         mGoOrMissionCompleteButton = (Button) findViewById(R.id.go_or_mission_complete_button);
 
-        // When you start using the real hardware you don't need fake GPS buttons.
+        // When you start using the real hardware you don't need test buttons.
         boolean hideFakeGpsButtons = false;
         if (hideFakeGpsButtons) {
             TableLayout fakeGpsButtonTable = (TableLayout) findViewById(R.id.fake_gps_button_table);
             fakeGpsButtonTable.setVisibility(View.GONE);
         }
-
-        mScripts = new Scripts(this);
-        setState(State.READY_FOR_MISSION);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    public void setState(State newState) {
-        mStateStartTime = System.currentTimeMillis();
-        // Make sure when the match ends that no scheduled timer events from scripts change the FSM.
-        if (mState == State.READY_FOR_MISSION && newState != State.NEAR_BALL_SCRIPT) {
-            Toast.makeText(this, "Illegal state transition out of READY_FOR_MISSION", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        mCurrentStateTextView.setText(newState.name());
-        speak(newState.name().replace("_", " "));
-        switch (newState) {
-            case READY_FOR_MISSION:
-                mGoOrMissionCompleteButton.setBackgroundResource(R.drawable.green_button);
-                mGoOrMissionCompleteButton.setText("Go!");
-                sendWheelSpeed(0, 0);
-                break;
-            case NEAR_BALL_SCRIPT:
-                mGpsInfoTextView.setText("---"); // Clear GPS display (optional)
-                mGuessXYTextView.setText("---"); // Clear guess display (optional)
-                mScripts.nearBallScript();
-                break;
-            case DRIVE_TOWARDS_FAR_BALL:
-                // All actions handled in the loop function.
-                break;
-            case ARC_TO_FAR_BALL:
-                break;
-            case FAR_BALL_SCRIPT:
-                mScripts.farBallScript();
-                break;
-            case DRIVE_TOWARDS_HOME:
-                // All actions handled in the loop function.
-                break;
-            case ARC_TO_HOME:
-                break;
-            case WAITING_FOR_PICKUP:
-                sendWheelSpeed(0, 0);
-                break;
-            case SEEKING_HOME:
-                // Actions handled in the loop function.
-                break;
-        }
-        mState = newState;
     }
 
     /**
-     * Updated the UI with the appropriate ball color and updates the location colors array with the value.
+     * Use this helper method to set the color of a ball.
+     * The location value here is 1 based.  Send 1, 2, or 3
+     * Side effect: Updates the UI with the appropriate ball color resource image.
      */
     public void setLocationToColor(int location, BallColor ballColor) {
         mBallImageButtons[location - 1].setImageResource(BALL_DRAWABLE_RESOURCES[ballColor.ordinal()]);
@@ -279,54 +135,16 @@ public class GolfBallDeliveryActivity extends RobotActivity {
         return System.currentTimeMillis() - mMatchStartTime;
     }
 
+
     // --------------------------- Driving commands ---------------------------
 
-    /**
-     * Send the wheel speeds to the robot and updates the TextViews.
-     */
-    @Override
-    public void sendWheelSpeed(int leftDutyCycle, int rightDutyCycle) {
-        super.sendWheelSpeed(leftDutyCycle, rightDutyCycle); // Send the values to the
-        mLeftDutyCycleTextView.setText("Left " + leftDutyCycle);
-        mRightDutyCycleTextView.setText(rightDutyCycle + " Right");
-    }
 
 
     // --------------------------- Sensor listeners ---------------------------
 
-    /**
-     * GPS sensor updates.
-     */
-    @Override
-    public void onLocationChanged(double x, double y, double heading, Location location) {
-        super.onLocationChanged(x, y, heading, location);
-        String gpsInfo = getString(R.string.xy_format, x, y);
-        if (heading <= 180.0 && heading > -180.0) {
-            gpsInfo += " " + getString(R.string.degrees_format, heading);
-            if (mState == State.DRIVE_TOWARDS_FAR_BALL) {
-
-            }
-            if (mState == State.DRIVE_TOWARDS_HOME) {
-
-            }
-        } else {
-            gpsInfo += " ?º";
-        }
-        gpsInfo += "    " + mGpsCounter;
-        mGpsInfoTextView.setText(gpsInfo);
-    }
-
-    /**
-     * Field Orientation sensor updates.
-     */
-    @Override
-    public void onSensorChanged(double fieldHeading, float[] orientationValues) {
-        super.onSensorChanged(fieldHeading, orientationValues);
-        mSensorOrientationTextView.setText(getString(R.string.degrees_format, fieldHeading));
-    }
 
 
-    // --------------- Button Handlers ---------------
+    // --------------------------- Button Handlers ----------------------------
 
     /**
      * Helper method that is called by all three golf ball clicks.
@@ -368,11 +186,15 @@ public class GolfBallDeliveryActivity extends RobotActivity {
         handleBallClickForLocation(3);
     }
 
+    /**
+     * Sets the mOnRedTeam boolean value as appropriate
+     * Side effects: Clears the balls
+     * @param view
+     */
     public void handleTeamChange(View view) {
-        mBallImageButtons[0].setImageResource(BALL_DRAWABLE_RESOURCES[BallColor.NONE.ordinal()]);
-        mBallImageButtons[1].setImageResource(BALL_DRAWABLE_RESOURCES[BallColor.NONE.ordinal()]);
-        mBallImageButtons[2].setImageResource(BALL_DRAWABLE_RESOURCES[BallColor.NONE.ordinal()]);
-        mLocationColors = new BallColor[]{BallColor.NONE, BallColor.NONE, BallColor.NONE};
+        setLocationToColor(1, BallColor.NONE);
+        setLocationToColor(2, BallColor.NONE);
+        setLocationToColor(3, BallColor.NONE);
         if (mOnRedTeam) {
             mOnRedTeam = false;
             mTeamChangeButton.setBackgroundResource(R.drawable.blue_button);
@@ -389,13 +211,14 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      * Sends a message to Arduino to perform a ball color test.
      */
     public void handlePerformBallTest(View view) {
-        Toast.makeText(this, "TODO: implement handlePerformBallTest", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "TODO: Implement handlePerformBallTest", Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Clicks to the red arrow image button that should show a dialog window.
      */
     public void handleDrivingStraight(View view) {
+        Toast.makeText(this, "handleDrivingStraight", Toast.LENGTH_SHORT).show();
         new DialogFragment() {
             @Override
             public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -428,7 +251,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
                     public void onClick(View v) {
                         mLeftStraightPwmValue = leftDutyCyclePicker.getValue();
                         mRightStraightPwmValue = rightDutyCyclePicker.getValue();
-                        mScripts.testStraightDrive();
+                        Toast.makeText(GolfBallDeliveryActivity.this, "TODO: Implement the drive straight test", Toast.LENGTH_SHORT).show();
                     }
                 });
                 return builder.create();
@@ -440,57 +263,50 @@ public class GolfBallDeliveryActivity extends RobotActivity {
      * Test GPS point when going to the Far ball (assumes Blue Team heading to red ball).
      */
     public void handleFakeGpsF0(View view) {
-        onLocationChanged(239, 50, NO_HEADING, null);  // Amazing GPS value but no heading so ignored.
+        Toast.makeText(this, "TODO: Implement handleFakeGpsF0", Toast.LENGTH_SHORT).show();
     }
 
     public void handleFakeGpsF1(View view) {
-        onLocationChanged(209, 50, 0, null);  // Just a bit out of range so ignored.
+        Toast.makeText(this, "TODO: Implement handleFakeGpsF1", Toast.LENGTH_SHORT).show();
     }
 
     public void handleFakeGpsF2(View view) {
-        onLocationChanged(220, 50, 135, null);  // Within range but the heading is pointing so poorly an arc should not be used.
+        Toast.makeText(this, "TODO: Implement handleFakeGpsF2", Toast.LENGTH_SHORT).show();
     }
 
     public void handleFakeGpsF3(View view) {
-        onLocationChanged(230, 40, 35, null);  // Within range with a good heading, use an arc to finish the ball drop process.
+        Toast.makeText(this, "TODO: Implement handleFakeGpsF3", Toast.LENGTH_SHORT).show();
     }
 
     public void handleFakeGpsH0(View view) {
-        onLocationChanged(165, 0, -180, null);
+        Toast.makeText(this, "TODO: Implement handleFakeGpsH0", Toast.LENGTH_SHORT).show();
     }
 
     public void handleFakeGpsH1(View view) {
-        onLocationChanged(50, 0, -180, null);
+        Toast.makeText(this, "TODO: Implement handleFakeGpsH1", Toast.LENGTH_SHORT).show();
     }
 
     public void handleFakeGpsH2(View view) {
-        onLocationChanged(20, 10, -170, null);
+        Toast.makeText(this, "TODO: Implement handleFakeGpsH2", Toast.LENGTH_SHORT).show();
     }
 
     public void handleFakeGpsH3(View view) {
-        Toast.makeText(this, "TODO: implement handleFakeGpsH3 if needed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "TODO: Implement handleFakeGpsH3", Toast.LENGTH_SHORT).show();
     }
 
     public void handleSetOrigin(View view) {
-        mFieldGps.setCurrentLocationAsOrigin();
+        Toast.makeText(this, "TODO: Implement handleSetOrigin", Toast.LENGTH_SHORT).show();
     }
 
     public void handleSetXAxis(View view) {
-        mFieldGps.setCurrentLocationAsLocationOnXAxis();
+        Toast.makeText(this, "TODO: Implement handleSetXAxis", Toast.LENGTH_SHORT).show();
     }
 
     public void handleZeroHeading(View view) {
-        mFieldOrientation.setCurrentFieldHeading(0);
+        Toast.makeText(this, "TODO: Implement handleZeroHeading", Toast.LENGTH_SHORT).show();
     }
 
     public void handleGoOrMissionComplete(View view) {
-        if (mState == State.READY_FOR_MISSION) {
-            mMatchStartTime = System.currentTimeMillis();
-            mGoOrMissionCompleteButton.setBackgroundResource(R.drawable.red_button);
-            mGoOrMissionCompleteButton.setText("Mission Complete!");
-            setState(State.NEAR_BALL_SCRIPT);
-        } else {
-            setState(State.READY_FOR_MISSION);
-        }
+        Toast.makeText(this, "TODO: Implement handleGoOrMissionComplete", Toast.LENGTH_SHORT).show();
     }
 }
