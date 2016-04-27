@@ -48,6 +48,8 @@ public class GolfBallDeliveryActivity extends RobotActivity {
         SEEKING_HOME,
     }
 
+	// TODO: When you design your own FSM you will change the states listed above!
+	
     /**
      * Tracks the robot's current state.
      */
