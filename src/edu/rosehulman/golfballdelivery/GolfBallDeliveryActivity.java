@@ -46,7 +46,6 @@ public class GolfBallDeliveryActivity extends RobotActivity {
         ARC_TO_HOME,
         WAITING_FOR_PICKUP,
         SEEKING_HOME,
-        RUNNING_VOICE_COMMAND,
     }
 
     /**
@@ -251,8 +250,6 @@ public class GolfBallDeliveryActivity extends RobotActivity {
                 break;
             case SEEKING_HOME:
                 // Actions handled in the loop function.
-                break;
-            case RUNNING_VOICE_COMMAND:
                 break;
         }
         mState = newState;
