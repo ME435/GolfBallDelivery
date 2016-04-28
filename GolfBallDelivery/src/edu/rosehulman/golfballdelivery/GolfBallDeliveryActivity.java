@@ -105,6 +105,12 @@ public class GolfBallDeliveryActivity extends Activity {
 	
     // ---------------------------- Driving area ---------------------------------
 	/**
+     * When driving towards a target, using a seek strategy, consider that state a success when the
+     * GPS distance to the target is less than (or equal to) this value.
+     */
+    public static final double ACCEPTED_DISTANCE_AWAY_FT = 10.0; // Within 10 feet is close enough.
+	
+	/**
      * Multiplier used during seeking to calculate a PWM value based on the turn amount needed.
      */
     private static final double SEEKING_DUTY_CYCLE_PER_ANGLE_OFF_MULTIPLIER = 3.0;  // units are (PWM value)/degrees
@@ -115,7 +121,7 @@ public class GolfBallDeliveryActivity extends Activity {
     private static final int LOWEST_DESIRABLE_SEEKING_DUTY_CYCLE = 150;
 
     /**
-     * Values used with the drive straight dialog.
+     * PWM duty cycle values used with the drive straight dialog that make your robot drive straightest.
      */
     public int mLeftStraightPwmValue = 255, mRightStraightPwmValue = 255;
 	// ------------------------ End of Driving area ------------------------------
