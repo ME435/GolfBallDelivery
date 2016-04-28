@@ -278,7 +278,8 @@
         android:layout_above="@+id/go_or_mission_complete_button"
         android:layout_alignParentRight="true"
         android:layout_margin="10dp"
-        android:text="Right 0"
+        android:gravity="right"
+        android:text="Right\n0"
         android:textSize="22sp" />
 
     <TextView
@@ -287,7 +288,7 @@
         android:layout_above="@+id/go_or_mission_complete_button"
         android:layout_alignParentLeft="true"
         android:layout_margin="10dp"
-        android:text="0 Left"
+        android:text="Left\n0"
         android:textSize="22sp" />
 
     <TextView

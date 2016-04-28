@@ -19,6 +19,9 @@ import android.widget.Toast;
 
 public class GolfBallDeliveryActivity extends Activity {
 
+	/** Constant used with logging that you'll see later. */
+	public static final String TAG = "GolfBallDelivery";
+
     /**
      * An enum used for variables when a ball color needs to be referenced.
      */
@@ -78,7 +81,7 @@ public class GolfBallDeliveryActivity extends Activity {
      * If not present the value will be 0.
      * For example if we have the black ball, then mWhiteBallLocation will equal 0.
      */
-    private int mNearBallLocation, mFarBallLocation, mWhiteBallLocation;
+    public int mNearBallLocation, mFarBallLocation, mWhiteBallLocation;
     // ----------------- End of mission strategy values ----------------------
 	
     /**
@@ -157,6 +160,13 @@ public class GolfBallDeliveryActivity extends Activity {
     // --------------------------- Methods added ---------------------------
 
 
+	
+	
+	
+	
+	// --------------------------- Drive command ---------------------------
+	
+	
 
     // --------------------------- Sensor listeners ---------------------------
 
