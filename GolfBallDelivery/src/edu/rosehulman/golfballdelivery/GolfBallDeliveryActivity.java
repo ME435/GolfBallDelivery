@@ -84,7 +84,9 @@ public class GolfBallDeliveryActivity extends Activity {
     public int mNearBallLocation, mFarBallLocation, mWhiteBallLocation;
     // ----------------- End of mission strategy values ----------------------
 	
-    /**
+	
+    // ---------------------------- Timing area ------------------------------
+	/**
      * Time when the state began (saved as the number of millisecond since epoch).
      */
     private long mStateStartTime;
@@ -98,11 +100,25 @@ public class GolfBallDeliveryActivity extends Activity {
      * Constant that holds the maximum length of the match (saved in milliseconds).
      */
     private long MATCH_LENGTH_MS = 300000; // 5 minutes in milliseconds (5 * 60 * 1000)
+	// ----------------------- End of timing area --------------------------------
+	
+	
+    // ---------------------------- Driving area ---------------------------------
+	/**
+     * Multiplier used during seeking to calculate a PWM value based on the turn amount needed.
+     */
+    private static final double SEEKING_DUTY_CYCLE_PER_ANGLE_OFF_MULTIPLIER = 3.0;  // units are (PWM value)/degrees
+
+    /**
+     * Variable used to cap the slowest PWM duty cycle used while seeking. Pick a value from -255 to 255.
+    */
+    private static final int LOWEST_DESIRABLE_SEEKING_DUTY_CYCLE = 150;
 
     /**
      * Values used with the drive straight dialog.
      */
     public int mLeftStraightPwmValue = 255, mRightStraightPwmValue = 255;
+	// ------------------------ End of Driving area ------------------------------
 
 
     @Override
