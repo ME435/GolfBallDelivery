@@ -63,6 +63,24 @@ public class GolfBallDeliveryActivity extends Activity {
     
     // ---------------------- End of UI References ----------------------
 
+	
+	// ---------------------- Mission strategy values ----------------------
+    /** Constants for the known locations. */
+    public static final long NEAR_BALL_GPS_X = 90;
+    public static final long FAR_BALL_GPS_X = 240;
+
+
+    /** Variables that will be either 50 or -50 depending on the balls we get. */
+    private double mNearBallGpsY, mFarBallGpsY;
+
+    /**
+     * If that ball is present the values will be 1, 2, or 3.
+     * If not present the value will be 0.
+     * For example if we have the black ball, then mWhiteBallLocation will equal 0.
+     */
+    private int mNearBallLocation, mFarBallLocation, mWhiteBallLocation;
+    // ----------------- End of mission strategy values ----------------------
+	
     /**
      * Time when the state began (saved as the number of millisecond since epoch).
      */
@@ -136,7 +154,7 @@ public class GolfBallDeliveryActivity extends Activity {
     }
 
 
-    // --------------------------- Driving commands ---------------------------
+    // --------------------------- Methods added ---------------------------
 
 
 
