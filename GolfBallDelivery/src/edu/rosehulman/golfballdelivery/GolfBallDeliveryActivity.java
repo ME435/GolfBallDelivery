@@ -60,7 +60,7 @@ public class GolfBallDeliveryActivity extends Activity {
      */
     private TextView mCurrentStateTextView, mStateTimeTextView, mGpsInfoTextView, mSensorOrientationTextView,
             mGuessXYTextView, mLeftDutyCycleTextView, mRightDutyCycleTextView, mMatchTimeTextView;
-    ;
+    
     // ---------------------- End of UI References ----------------------
 
     /**
