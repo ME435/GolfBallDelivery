@@ -2,8 +2,6 @@ package edu.rosehulman.golfballdelivery;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
@@ -200,19 +198,14 @@ public class GolfBallDeliveryActivity extends Activity {
      * Helper method that is called by all three golf ball clicks.
      */
     private void handleBallClickForLocation(final int location) {
-        new DialogFragment() {
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("What was the real color?").setItems(R.array.ball_colors,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                GolfBallDeliveryActivity.this.setLocationToColor(location, BallColor.values()[which]);
-                            }
-                        });
-                return builder.create();
-            }
-        }.show(getFragmentManager(), "unused tag");
+        AlertDialog.Builder builder = new AlertDialog.Builder(GolfBallDeliveryActivity.this);
+        builder.setTitle("What was the real color?").setItems(R.array.ball_colors,
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    GolfBallDeliveryActivity.this.setLocationToColor(location, BallColor.values()[which]);
+                }
+            });
+        builder.create().show();
     }
 
     /**
@@ -264,49 +257,46 @@ public class GolfBallDeliveryActivity extends Activity {
         Toast.makeText(this, "TODO: Implement handlePerformBallTest", Toast.LENGTH_SHORT).show();
     }
 
+    AlertDialog alert;
     /**
      * Clicks to the red arrow image button that should show a dialog window.
      */
     public void handleDrivingStraight(View view) {
         Toast.makeText(this, "handleDrivingStraight", Toast.LENGTH_SHORT).show();
-        new DialogFragment() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(GolfBallDeliveryActivity.this);
+        builder.setTitle("Driving Straight Calibration");
+        View dialoglayout = getLayoutInflater().inflate(R.layout.driving_straight_dialog, (ViewGroup) getCurrentFocus());
+        builder.setView(dialoglayout);
+        final NumberPicker rightDutyCyclePicker = (NumberPicker) dialoglayout.findViewById(R.id.right_pwm_number_picker);
+        rightDutyCyclePicker.setMaxValue(255);
+        rightDutyCyclePicker.setMinValue(0);
+        rightDutyCyclePicker.setValue(mRightStraightPwmValue);
+        rightDutyCyclePicker.setWrapSelectorWheel(false);
+        final NumberPicker leftDutyCyclePicker = (NumberPicker) dialoglayout.findViewById(R.id.left_pwm_number_picker);
+        leftDutyCyclePicker.setMaxValue(255);
+        leftDutyCyclePicker.setMinValue(0);
+        leftDutyCyclePicker.setValue(mLeftStraightPwmValue);
+        leftDutyCyclePicker.setWrapSelectorWheel(false);
+        Button doneButton = (Button) dialoglayout.findViewById(R.id.done_button);
+        doneButton.setOnClickListener(new OnClickListener() {
             @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Driving Straight Calibration");
-                View dialoglayout = getLayoutInflater().inflate(R.layout.driving_straight_dialog, (ViewGroup) getCurrentFocus());
-                builder.setView(dialoglayout);
-                final NumberPicker rightDutyCyclePicker = (NumberPicker) dialoglayout.findViewById(R.id.right_pwm_number_picker);
-                rightDutyCyclePicker.setMaxValue(255);
-                rightDutyCyclePicker.setMinValue(0);
-                rightDutyCyclePicker.setValue(mRightStraightPwmValue);
-                rightDutyCyclePicker.setWrapSelectorWheel(false);
-                final NumberPicker leftDutyCyclePicker = (NumberPicker) dialoglayout.findViewById(R.id.left_pwm_number_picker);
-                leftDutyCyclePicker.setMaxValue(255);
-                leftDutyCyclePicker.setMinValue(0);
-                leftDutyCyclePicker.setValue(mLeftStraightPwmValue);
-                leftDutyCyclePicker.setWrapSelectorWheel(false);
-                Button doneButton = (Button) dialoglayout.findViewById(R.id.done_button);
-                doneButton.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mLeftStraightPwmValue = leftDutyCyclePicker.getValue();
-                        mRightStraightPwmValue = rightDutyCyclePicker.getValue();
-                        dismiss();
-                    }
-                });
-                final Button testStraightButton = (Button) dialoglayout.findViewById(R.id.test_straight_button);
-                testStraightButton.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mLeftStraightPwmValue = leftDutyCyclePicker.getValue();
-                        mRightStraightPwmValue = rightDutyCyclePicker.getValue();
-                        Toast.makeText(GolfBallDeliveryActivity.this, "TODO: Implement the drive straight test", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                return builder.create();
+            public void onClick(View v) {
+                mLeftStraightPwmValue = leftDutyCyclePicker.getValue();
+                mRightStraightPwmValue = rightDutyCyclePicker.getValue();
+                alert.dismiss();
             }
-        }.show(getFragmentManager(), "unused tag");
+        });
+        final Button testStraightButton = (Button) dialoglayout.findViewById(R.id.test_straight_button);
+        testStraightButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLeftStraightPwmValue = leftDutyCyclePicker.getValue();
+                mRightStraightPwmValue = rightDutyCyclePicker.getValue();
+                Toast.makeText(GolfBallDeliveryActivity.this, "TODO: Implement the drive straight test", Toast.LENGTH_SHORT).show();
+            }
+        });
+        alert = builder.create();
+        alert.show();
     }
 
     /**
