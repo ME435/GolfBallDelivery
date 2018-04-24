@@ -106,7 +106,7 @@ public class GolfBallDeliveryActivity extends Activity {
      * When driving towards a target, using a seek strategy, consider that state a success when the
      * GPS distance to the target is less than (or equal to) this value.
      */
-    public static final double ACCEPTED_DISTANCE_AWAY_FT = 10.0; // Within 10 feet is close enough.
+    public static final double ACCEPTABLE_DISTANCE_AWAY_FT = 10.0; // Within 10 feet is close enough.
 	
 	/**
      * Multiplier used during seeking to calculate a PWM value based on the turn amount needed.
@@ -300,38 +300,38 @@ public class GolfBallDeliveryActivity extends Activity {
     }
 
     /**
-     * Test GPS point when going to the Far ball (assumes Blue Team heading to red ball).
-     */
+    * Test GPS point when going to the Far ball (assumes Blue Team heading to red ball).
+    */
     public void handleFakeGpsF0(View view) {
-        Toast.makeText(this, "TODO: Implement handleFakeGpsF0", Toast.LENGTH_SHORT).show();
+        onLocationChanged(165, 50, NO_HEADING, null); // Midfield
     }
 
     public void handleFakeGpsF1(View view) {
-        Toast.makeText(this, "TODO: Implement handleFakeGpsF1", Toast.LENGTH_SHORT).show();
+        onLocationChanged(209, 50, 0, null);  // Out of range so ignored.
     }
 
     public void handleFakeGpsF2(View view) {
-        Toast.makeText(this, "TODO: Implement handleFakeGpsF2", Toast.LENGTH_SHORT).show();
+        onLocationChanged(231, 50, 135, null);  // Within range (terrible heading)
     }
 
     public void handleFakeGpsF3(View view) {
-        Toast.makeText(this, "TODO: Implement handleFakeGpsF3", Toast.LENGTH_SHORT).show();
+        onLocationChanged(240, 41, 35, null);  // Within range
     }
 
     public void handleFakeGpsH0(View view) {
-        Toast.makeText(this, "TODO: Implement handleFakeGpsH0", Toast.LENGTH_SHORT).show();
+        onLocationChanged(165, 0, -180, null); // Midfield
     }
 
     public void handleFakeGpsH1(View view) {
-        Toast.makeText(this, "TODO: Implement handleFakeGpsH1", Toast.LENGTH_SHORT).show();
+        onLocationChanged(11, 0, -180, null);  // Out of range so ignored.
     }
 
     public void handleFakeGpsH2(View view) {
-        Toast.makeText(this, "TODO: Implement handleFakeGpsH2", Toast.LENGTH_SHORT).show();
+        onLocationChanged(9, 0, -170, null);  // Within range
     }
 
     public void handleFakeGpsH3(View view) {
-        Toast.makeText(this, "TODO: Implement handleFakeGpsH3", Toast.LENGTH_SHORT).show();
+        onLocationChanged(0, -9, -170, null);  // Within range
     }
 
     public void handleSetOrigin(View view) {
