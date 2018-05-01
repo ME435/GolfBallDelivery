@@ -130,24 +130,24 @@ public class GolfBallDeliveryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_golf_ball_delivery);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mBallImageButtons = new ImageButton[]{(ImageButton) findViewById(R.id.location_1_image_button),
-                (ImageButton) findViewById(R.id.location_2_image_button),
-                (ImageButton) findViewById(R.id.location_3_image_button)};
-        mTeamChangeButton = (Button) findViewById(R.id.team_change_button);
-        mCurrentStateTextView = (TextView) findViewById(R.id.current_state_textview);
-        mStateTimeTextView = (TextView) findViewById(R.id.state_time_textview);
-        mGpsInfoTextView = (TextView) findViewById(R.id.gps_info_textview);
-        mSensorOrientationTextView = (TextView) findViewById(R.id.orientation_textview);
-        mGuessXYTextView = (TextView) findViewById(R.id.guess_location_textview);
-        mLeftDutyCycleTextView = (TextView) findViewById(R.id.left_duty_cycle_textview);
-        mRightDutyCycleTextView = (TextView) findViewById(R.id.right_duty_cycle_textview);
-        mMatchTimeTextView = (TextView) findViewById(R.id.match_time_textview);
-        mGoOrMissionCompleteButton = (Button) findViewById(R.id.go_or_mission_complete_button);
+        mBallImageButtons = new ImageButton[]{findViewById(R.id.location_1_image_button),
+                findViewById(R.id.location_2_image_button),
+                findViewById(R.id.location_3_image_button)};
+        mTeamChangeButton = findViewById(R.id.team_change_button);
+        mCurrentStateTextView = findViewById(R.id.current_state_textview);
+        mStateTimeTextView = findViewById(R.id.state_time_textview);
+        mGpsInfoTextView = findViewById(R.id.gps_info_textview);
+        mSensorOrientationTextView = findViewById(R.id.orientation_textview);
+        mGuessXYTextView = findViewById(R.id.guess_location_textview);
+        mLeftDutyCycleTextView = findViewById(R.id.left_duty_cycle_textview);
+        mRightDutyCycleTextView = findViewById(R.id.right_duty_cycle_textview);
+        mMatchTimeTextView = findViewById(R.id.match_time_textview);
+        mGoOrMissionCompleteButton = findViewById(R.id.go_or_mission_complete_button);
 
         // When you start using the real hardware you don't need test buttons.
         boolean hideFakeGpsButtons = false;
         if (hideFakeGpsButtons) {
-            TableLayout fakeGpsButtonTable = (TableLayout) findViewById(R.id.fake_gps_button_table);
+            TableLayout fakeGpsButtonTable = findViewById(R.id.fake_gps_button_table);
             fakeGpsButtonTable.setVisibility(View.GONE);
         }
     }
